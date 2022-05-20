@@ -47,7 +47,7 @@ setInterval(() => {
     } else if (socket.readyState === SOCKET_CLOSING) {
       console.log("CLOSING");
     } else if(socket.readyState === SOCKET_CLOSED) {
-      refresh(true);
+      refresh(false);
     }
 }, 1500);
 
