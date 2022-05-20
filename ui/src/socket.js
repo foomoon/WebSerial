@@ -1,6 +1,12 @@
 import Vue from "vue"
 
-let host = "ws://"+document.location.host+"/webserialws";
+let SOCKET_CONNECTING = 0;
+let SOCKET_OPEN = 1;
+let SOCKET_CLOSING = 2;
+let SOCKET_CLOSED = 3;
+
+//let host = "ws://"+document.location.host+"/webserialws";
+let host = "ws://datalogger.local/webserialws"; // For Local Testing
 
 // let host = "ws://192.168.1.x/dashws"; // For Local Testing via npm run serve
 
@@ -10,7 +16,7 @@ const socket = new WebSocket(host);
 const emitter = new Vue({
   methods:{
     send(message){
-      if (1 === socket.readyState)
+      if (SOCKET_OPEN === socket.readyState)
         socket.send(message)
     }
   }
@@ -34,11 +40,24 @@ socket.onerror = function(err){
 
 
 setInterval(() => {
-    if(socket.readyState == 0){
-        emitter.$emit("disconnected");
-    }else if(socket.readyState === 3){
-        location.reload();
+    if (socket.readyState === SOCKET_CONNECTING) {
+      emitter.$emit("disconnected");
+    } else if (socket.readyState === SOCKET_OPEN) {
+      // console.log("OPEN");
+    } else if (socket.readyState === SOCKET_CLOSING) {
+      console.log("CLOSING");
+    } else if(socket.readyState === SOCKET_CLOSED) {
+      refresh(false);
     }
 }, 1500);
+
+function refresh(test) {
+  if (test) return;
+  var url = location.origin;
+  var pathname = location.pathname;
+  var hash = location.hash;
+
+  location = url + pathname + '?application_refresh=' + Math.round(Math.random() * 100000) + hash;
+}
 
 export default emitter
