@@ -16,14 +16,31 @@
                   <div class="col-12">
                   <GmapMap
                     :center="mapCenter"
-                    :zoom="7"
+                    :zoom="zoom"
+                    :options="{
+                      zoomControl: true,
+                      mapTypeControl: false,
+                      scaleControl: true,
+                      streetViewControl: false,
+                      rotateControl: false,
+                      fullscreenControl: true,
+                      disableDefaultUI: false
+                    }"
                     map-type-id="terrain"
                     style="width: 100%; height: 400px; border-radius:7px; overflow:hidden; border: 1px solid #becad6;"
                   >
+                    <GmapInfoWindow 
+                      :options="infoOptions" 
+                      :position="mapCenter" 
+                      :opened="infoWinOpen" 
+                      @closeclick="infoWinOpen=false">
+                    </GmapInfoWindow>
                     <GmapMarker
                       :position="mapCenter"
                       @mouseover="statusText = mapCenter.utc"
                       @mouseout="statusText = null"
+                      :clickable="true" 
+                      @click="infoWinOpen=true"
                     />
                     <div slot="visible">
                       <div style="bottom: 0; left: 0; background-color: #0000FF; color: white; position: absolute; z-index: 100">
@@ -32,6 +49,7 @@
                     </div>
                   </GmapMap>
                   </div>
+                  <!-- input field and submit button -->
                   <!-- <div class="col-8 col-md-9 col-lg-10">
                       <div class="form-group">
                         <input type="text" class="form-control" placeholder="Type here" v-model="sendInput" v-on:keyup.enter="sendData" :disabled="!ws.connected">
@@ -42,11 +60,6 @@
                   </div> -->
                 </div>
               </div>
-              <!-- <div class="container">
-                <div class="col-12 mt-3" style="font-size:0.5em">
-                  <pre>{{outputJSON}}</pre>
-                </div>
-              </div> -->
               <div class="container">
                 <div class="row justify-content-center">
                   <div class="col-12">
@@ -62,6 +75,9 @@
                   </div>
                   <liveChart class="mt-3" :myData="pressure" title="Raw Pressure"/>
                   <liveChart class="mt-3" :myData="height" title="Raw Ride Height"/>
+                  <liveChart class="mt-3" :myData="temperature" title="Raw Temperature"/>
+                  <liveChart class="mt-3" :myData="speed" title="Speed"/>
+                  <liveChart class="mt-3" :myData="heading" title="Heading"/>
                 </div>
               </div>
             </div>
@@ -77,6 +93,10 @@ import Socket from './socket';
 import parseData from './data-logger';
 import liveChart from './liveChart.vue';
 
+// function sleep(ms) {
+//   return new Promise(resolve => setTimeout(resolve, ms));
+// }
+
 export default {
   name: 'webserial',
   components: {
@@ -90,13 +110,35 @@ export default {
       },
       serialBuffer: "",
       sendInput: "",
-      mapCenter: {lat:27, lng:-80},
+      mapCenter: {lat:34.455,lng:-88.025},
+      zoom: 10,
       statusText: "",
       isScroll: true,
       outputJSON: "",
       pressure: [],
+      temperature: [],
       height: [],
-      config: {}
+      config: {},
+      speed: [],
+      heading: [],
+      infoOptions: {
+        content: 'placeholder',
+          //optional: offset infowindow so it visually sits nicely on top of our marker
+          pixelOffset: {
+            width: 0,
+            height: -35
+          }
+        },
+      infoWinOpen: false,
+    }
+  },
+
+  watch: {
+    mapCenter: {
+      handler() {
+        this.infoOptions.content = "<b>Speed:</b> " + this.speed.y + " m/s<br> <b>Heading:</b> " + this.heading.y + " deg"
+      },
+      deep: true
     }
   },
 
@@ -122,36 +164,78 @@ export default {
     Socket.$on("message", (msg) => {
       this.ws.connected = true;
 
+      // console.log(msg);
       let data = parseData(msg);
-      this.outputJSON = JSON.stringify(data,null," ");
-      this.mapCenter = data;
 
-      if (this.outputJSON.length > 10) {
-        this.serialBuffer = this.outputJSON;
+      console.log("Incoming Actual Sample Rate: " + data.length + " hz")
 
-        let utc = new Date(data.utc);
-        let GMToffset = - 5 * 3600 * 1000;
-        let timestamp = utc.getTime();
+      // let samplesPerMsg = data.length == 0 ? 1 : data.length; // avoid dividing by zero later
+      // let delay = 1000 / samplesPerMsg; // vary rate of delay based on how many samples are in msg
+      // let cnt = 0;
+      data.forEach(d=>{
 
-        this.pressure = {
-          label: 'P',
-          x: timestamp + GMToffset,   
-          y: JSON.parse(data.pressureRaw)
-        };
-        this.height = {
-          label: 'H',
-          x: timestamp + GMToffset,   
-          y: JSON.parse(data.heightRaw)
+      // if (data.length > 0) {
+      //   let d = data[0];
+
+        this.outputJSON = JSON.stringify(d,null," ");
+
+        if (this.outputJSON.length > 10) {
+
+          //setTimeout(()=>{
+
+          // sleep(delay).then(() => { // hopefully delay output
+
+            this.mapCenter = d;           // center map on point
+
+            let utc = new Date(d.utc);
+            let GMToffset = - 5 * 3600 * 1000;
+            let timestamp = utc.getTime();
+
+            this.pressure = {
+              label: 'P',
+              x: timestamp + GMToffset,   
+              y: JSON.parse(d.pressureRaw)
+            };
+            this.temperature = {
+              label: 'T',
+              x: timestamp + GMToffset,   
+              y: JSON.parse(d.temperatureRaw)
+            };
+            this.height = {
+              label: 'H',
+              x: timestamp + GMToffset,   
+              y: JSON.parse(d.heightRaw)
+            }
+            this.speed = {
+              label: 'Speed',
+              x: timestamp + GMToffset,   
+              y: [d.speed]
+            }
+            this.heading = {
+              label: 'Heading',
+              x: timestamp + GMToffset,   
+              y: [d.heading]
+            }
+          // }); // end sleep
+          // }, delay * cnt) // end setTimeout
+
+          // cnt++;
+
+        } // end if
+      }) // end forEach
+      // } // end if
+      
+      if (data.length == 0) {
+        console.log(msg);
+        this.serialBuffer = this.serialBuffer + msg;
+        let textarea = this.$el.querySelector("#console");
+        if (this.isScroll) {
+          textarea.scrollTop = textarea.scrollHeight;
         }
-        return
+      } else {
+        this.serialBuffer = this.outputJSON;
       }
       
-      this.serialBuffer = this.serialBuffer + msg;
-      let textarea = this.$el.querySelector("#console");
-      if (this.isScroll) {
-
-        textarea.scrollTop = textarea.scrollHeight;
-      }
     }); // end .$on
   }
 }
