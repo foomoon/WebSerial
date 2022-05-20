@@ -1,18 +1,6 @@
-<p align="center"><img src="https://raw.githubusercontent.com/ayushsharma82/WebSerial/master/docs/logo.svg?sanitize=true" width="450"></p>
 
-<hr/>
 
-<p align="center">
-<img src="https://img.shields.io/github/last-commit/ayushsharma82/WebSerial.svg?style=for-the-badge" />
-&nbsp;
-<img src="https://img.shields.io/github/workflow/status/ayushsharma82/WebSerial/Arduino%20Library%20CI/master?style=for-the-badge" />
-&nbsp;
-<img src="https://img.shields.io/github/license/ayushsharma82/WebSerial.svg?style=for-the-badge" />
-&nbsp;
-<a href="https://www.buymeacoffee.com/6QGVpSj" target="_blank"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-%245-orange?style=for-the-badge&logo=buy-me-a-coffee" /></a>
-</p>
 
-<hr/>
 
 <br/>
 
@@ -21,30 +9,12 @@
 <br/>
 
 <h2 align="center">Preview</h2>
-<p align="center"><img src="https://raw.githubusercontent.com/ayushsharma82/WebSerial/master/docs/webserial.PNG" width="850"></p>
+<p align="center"><img src="data-logger.png" width="850"></p>
 
 <br/>
 <br/>
 <br/>
 
-<h2 align="center">Upgrade to Pro</h2>
-
-<p align="center">
-Checkout the Pro version of the WebSerial library which comes with enhanced & snappy UI, along with 'clear' & 'lock scroll' buttons on the monitor interface. Best of all, it's only 10KB in size compared to 50KB of regular WebSerial. <br><br> <b>Available Here: </b>
-<ol align="center">
-  <li>https://www.buymeacoffee.com/6QGVpSj/e/25091</li>
-  <li>https://webserial.pro</li>
-</ol>
-</p>
-
-<p align="center">
-  <a href="https://www.buymeacoffee.com/6QGVpSj/e/25091" target="_blank">
-  <img src="/docs/promo.png" alt="WebSerialPro">
-  </a>
-</p>
-
-<br/>
-<br/>
 
 <h2>Features</h2>
 <p>
@@ -78,31 +48,12 @@ Checkout the Pro version of the WebSerial library which comes with enhanced & sn
 
 <br/>
 
-<h2>How to Install</h2>
 
-###### Directly Through Arduino IDE 
-Go to Sketch > Include Library > Library Manager > Search for "WebSerial" > Install
-
-###### Manual Install
-
-For Windows: Download the [Repository](https://github.com/ayushsharma82/WebSerial/archive/master.zip) and extract the .zip in Documents>Arduino>Libraries>{Place "WebSerial" folder Here}
-
-For Linux: Download the [Repository](https://github.com/ayushsharma82/WebSerial/archive/master.zip) and extract the .zip in Sketchbook>Libraries>{Place "WebSerial" folder Here}
-
-Include other library
-https://github.com/me-no-dev/ESPAsyncWebServer
-https://github.com/me-no-dev/AsyncTCP
-
-###### Manually through IDE
-
-Download the [Repository](https://github.com/ayushsharma82/WebSerial/archive/master.zip), Go to Sketch>Include Library>Add .zip Library> Select the Downloaded .zip File.
-
-<br>
 
 <h2>Documentation</h2>
 <p>WebSerial is very similar to the default Serial Monitor Library of Arduino.</p>
 
-Please see `Demo` examples for better understanding on how to setup WebSerial for your Project: [Click Here](https://github.com/ayushsharma82/WebSerial/blob/master/examples/ESP8266_Demo/ESP8266_Demo.ino)
+Please see `Demo` examples for better understanding on how to setup WebSerial for your Project: [Click Here](https://github.com/foomoon/WebSerial/blob/master/examples/ESP8266_Demo/ESP8266_Demo.ino)
 
 
 WebSerial has 2 main functions:
@@ -122,16 +73,6 @@ Both functions support the following datatypes: `String`, `const char`, `char`, 
 <b>To Access Webserial:</b> Go to `<IP Address>/webserial` in your browser ( where `<IP Address>` is the IP of your ESP).
 
 <br>
-
-<h2>Contributions</h2>
-<p>Every Contribution to this repository is highly appriciated! Don't fear to create pull requests which enhance or fix the library as ultimatly you are going to help everybody.</p>
-<p>
-If you want to donate to the author then <b>you can buy me a coffee</b>, It really helps me keep these libraries updated:
-<br/><br/>
-<a href="https://www.buymeacoffee.com/6QGVpSj" target="_blank"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-%245-orange?style=for-the-badge&logo=buy-me-a-coffee" /></a>
-</p>
-<br/>
-<br/>
 
 
 <h2>License</h2>
