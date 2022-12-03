@@ -98,7 +98,7 @@ import liveChart from './liveChart.vue';
 // }
 
 export default {
-  name: 'web-serial',
+  name: 'webserial',
   components: {
     liveChart
   },
@@ -110,7 +110,7 @@ export default {
       },
       serialBuffer: "",
       sendInput: "",
-      mapCenter: {lat:34.8,lng:-86.97},
+      mapCenter: {lat:34.455,lng:-88.025},
       zoom: 10,
       statusText: "",
       isScroll: true,
